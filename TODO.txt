@@ -1,0 +1,17 @@
+requirements
+let users pay by month
+view how much user owes 
+admin - view which users need to pay
+admin - manually change users paid status
+    
+users - view balance, button to redirect to stripe
+admin - list of user emails, amount due
+
+enable subscription payments
+
+DB
+
+users {
+    email
+    amount due
+}
