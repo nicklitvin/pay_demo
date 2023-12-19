@@ -1,12 +1,25 @@
 import { PrismaClient } from "@prisma/client";
 
-interface UserInfo {
-    email : String,
-    amountDue: Number
+// PRISMA SETUP
+
+declare global {
+    var prisma: undefined | PrismaClient
 }
 
-const prisma = new PrismaClient();
+function makePrisma() {
+    console.log("making prisma client");
+    return new PrismaClient();
+}
+
+const prisma = globalThis.prisma ?? makePrisma();
+if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
+
+// MAIN DB FUNCTIONS
+
 let monthlyFee : number | null;
+interface UserInfo {
+    amountDue: number
+}
 
 async function getMonthlyFee() : Promise<number> {
     if (!monthlyFee) {
@@ -20,37 +33,31 @@ async function getMonthlyFee() : Promise<number> {
     return monthlyFee;
 }
 
-async function doesUserExist(userId : string) : Promise<boolean> {
+async function doesEmailExist(email : string) : Promise<boolean> {
     const count = await prisma.users.count({
         where: {
-            userId: userId
+            email: email
         }
     });
     return count > 0;
 }
 
-async function getUserInfo(userId : string) : Promise<UserInfo> {
-    const user = await prisma.users.findFirst({
-        where: {
-            userId: userId
-        }
-    });
-    const amountDue = await getAmountDue(userId);
+async function getUserInfo(email : string) : Promise<UserInfo> {
+    const amountDue = await getAmountDue(email);
 
     return {
-        email: user!.email,
         amountDue: amountDue
     };
 }
 
-async function getAmountDue(userId : string) {
+async function getAmountDue(email : string) {
     const pastTransactions = await prisma.transactions.aggregate({
         _sum: {
             amount: true
         },
         where: {
             AND: [
-                {userId: userId},
+                {email: email},
                 {date: {gte: new Date(), lte: new Date()}}
             ]
         }
@@ -62,23 +69,53 @@ async function getAmountDue(userId : string) {
     return monthlyFee - totalPaid;
 }
 
-async function createUser(userId : string, email : string) : Promise<UserInfo> {
-    const user = await prisma.users.create({
+async function createUser(email : string) : Promise<UserInfo> {
+    await prisma.users.create({
         data: {
             email: email,
-            userId: userId
         }
     });
     return {
-        email: user!.email,
         amountDue: await getMonthlyFee()
     };
 }
 
+async function isAdmin(email : string) : Promise<boolean> {
+    const data = await prisma.globals.findFirst({
+        where: {
+            type: "adminEmail",
+        }
+    });
+
+    return data?.value == email;
+}
+
+async function getAdminData() {
+    const data = await prisma.users.findMany({
+        select: {
+            email: true,
+            transactions: {
+                select: {
+                    amount: true,
+                    date: true
+                },
+                where: {
+                    date: {
+                        gte: new Date()
+                    }
+                }
+            }
+        }
+    });
+    return data
+}
+
 export {
-    doesUserExist,
+    doesEmailExist,
     getUserInfo,
-    createUser
+    createUser,
+    isAdmin,
+    getAdminData,
 }
 
 

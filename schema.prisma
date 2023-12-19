@@ -9,14 +9,15 @@ datasource db {
 }
 
 model Users {
-  userId     String @unique
-  email      String 
+    email      String @unique
+    transactions Transactions[]
 }
 
 model Transactions {
-    userId String @unique
+    email String @unique
     date DateTime 
     amount Float
+    user Users @relation(fields: [email], references: [email])
 }
 
 model Globals {
