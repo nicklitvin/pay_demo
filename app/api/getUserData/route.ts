@@ -11,7 +11,7 @@ export async function GET() {
         const userEmail = clerkUserInfo!.emailAddresses[0].emailAddress;
 
         if (await doesEmailExist(userEmail)) {
-            const user = await getUserInfo(userId);
+            const user = await getUserInfo(userEmail);
             return NextResponse.json({
                 email: userEmail,
                 amountDue: user.amountDue

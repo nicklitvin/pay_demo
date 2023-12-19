@@ -17,6 +17,7 @@ model Transactions {
     email String @unique
     date DateTime 
     amount Float
+    admin Boolean
     user Users @relation(fields: [email], references: [email])
 }
 

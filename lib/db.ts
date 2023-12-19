@@ -51,20 +51,15 @@ async function getUserInfo(email : string) : Promise<UserInfo> {
 }
 
 async function getAmountDue(email : string) {
-    const pastTransactions = await prisma.transactions.aggregate({
-        _sum: {
-            amount: true
-        },
+    const pastTransactions = await prisma.transactions.findMany({
         where: {
             AND: [
                 {email: email},
-                {date: {gte: new Date(), lte: new Date()}}
+                {date: {gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)}}
             ]
         }
     });
-    const pastSum = pastTransactions._sum.amount;
-    const totalPaid = pastSum ?? 0;
-
+    const totalPaid = pastTransactions.reduce( (previous,current) => previous + current.amount, 0);
     const monthlyFee = await getMonthlyFee();
     return monthlyFee - totalPaid;
 }
@@ -92,22 +87,40 @@ async function isAdmin(email : string) : Promise<boolean> {
 
 async function getAdminData() {
     const data = await prisma.users.findMany({
-        select: {
-            email: true,
+        include: {
             transactions: {
                 select: {
+                    date: true,
                     amount: true,
-                    date: true
-                },
-                where: {
-                    date: {
-                        gte: new Date()
-                    }
+                    admin: true
                 }
             }
         }
-    });
-    return data
+    })
+    return data;
+}
+
+async function makePayment(email : string, amount : number, admin : boolean) {
+    await prisma.transactions.create({
+        data: {
+            admin: admin,
+            amount: amount,
+            date: new Date(),
+            email: email,
+        }
+    })
+    await prisma.users.update({
+        where: {
+            email: email
+        },
+        data: {
+            transactions: {
+                connect: {
+                    email: email
+                }
+            }
+        }
+    })
 }
 
 export {
@@ -116,6 +129,7 @@ export {
     createUser,
     isAdmin,
     getAdminData,
+    makePayment
 }
 
 
