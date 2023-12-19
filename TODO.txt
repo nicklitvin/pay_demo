@@ -1,3 +1,11 @@
+TODO
+fix connection problems
+admin privilege to make payment for user
+
+NOTES
+table name must have double quotes in vercel db
+single quotes for strings
+
 requirements
 let users pay by month
 view how much user owes 
@@ -14,4 +22,15 @@ DB
 users {
     email
     amount due
+}
+
+transactions {
+    userid
+    date,
+    amount paid
+}
+
+globals {
+    type
+    value
 }

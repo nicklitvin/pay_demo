@@ -1,37 +1,28 @@
-import { MONTHLY_FEE } from "@/app/globals";
+import { createUser, doesUserExist, getUserInfo } from "@/lib/db";
 import { auth, currentUser } from "@clerk/nextjs";
-import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export async function GET() {
     try {
         const { userId } = auth();
-        const user = await currentUser();
+        
+        if (!userId) return NextResponse.json(null, {status: 401})
 
-        if (!user || !userId) {
-            return NextResponse.json(null, {status: 401})
-        }
-
-        let foundUser = await prisma.users.findFirst({
-            where: {userId: userId}
-        })
-
-        if (!foundUser) {
-            foundUser = await prisma.users.create({
-                data: {
-                    email: user.emailAddresses[0].emailAddress,
-                    amount_due: MONTHLY_FEE,
-                    userId: userId
-                }
+        if (await doesUserExist(userId)) {
+            const user = await getUserInfo(userId);
+            return NextResponse.json({
+                email: user.email,
+                amountDue: user.amountDue
             })
-        }
-
-        return NextResponse.json({
-            email: foundUser.email,
-            amountDue: foundUser.amount_due
-        })
+        } else {
+            const clerkUserInfo = await currentUser();
+            const userEmail = clerkUserInfo!.emailAddresses[0].emailAddress;
+            const user = await createUser(userId, userEmail);
+            return NextResponse.json({
+                email: user.email,
+                amountDue: user.amountDue
+            })
+        }       
     } catch (err) {
         console.log(err);
         return NextResponse.json(err, {status: 500})
