@@ -101,13 +101,13 @@ async function getAdminData() {
 }
 
 async function makePayment(email : string, amount : number, admin : boolean) {
-    await prisma.transactions.create({
+    const transaction = await prisma.transactions.create({
         data: {
             admin: admin,
             amount: amount,
             date: new Date(),
             email: email,
-        }
+        },
     })
     await prisma.users.update({
         where: {
@@ -116,6 +116,7 @@ async function makePayment(email : string, amount : number, admin : boolean) {
         data: {
             transactions: {
                 connect: {
+                    id: transaction.id,
                     email: email
                 }
             }

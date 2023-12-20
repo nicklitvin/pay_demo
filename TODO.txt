@@ -1,9 +1,13 @@
 TODO
-admin privilege to make payment for user
+integrate stripe to make payment
+analytics for admin 
 
 NOTES
 table name must have double quotes in vercel db
 single quotes for strings
+
+npx prisma generate
+npx prisma db push
 
 requirements
 let users pay by month
@@ -15,21 +19,3 @@ users - view balance, button to redirect to stripe
 admin - list of user emails, amount due
 
 enable subscription payments
-
-DB
-
-users {
-    email
-    amount due
-}
-
-transactions {
-    userid
-    date,
-    amount paid
-}
-
-globals {
-    type
-    value
-}
