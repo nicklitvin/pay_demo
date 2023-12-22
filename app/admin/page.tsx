@@ -1,26 +1,46 @@
 "use client"
-import { UserButton } from "@clerk/nextjs";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import { Analytics } from "../_components/analytics";
 
 export default function Admin() {
+    // const {data, isLoading, error } = {
+    //     data: [
+    //         {
+    //             email: "a@asjdhkjxdkajdhksajdhkasgmail.com",
+    //             transactions: []
+    //         },
+    //         {
+    //             email: "b@gmail.com",
+    //             transactions: []
+    //         },
+    //     ],
+    //     isLoading: false,
+    //     error: false
+    // }
+    
     const { data, isLoading, error } = useSWR("/api/getAdminData", (url) => axios.get(url).then(res => res.data) );
     let content;
 
     const [formEmail, setFormEmail] = useState<string>();
     const [formAmount, setFormAmount] = useState<number>();
     const [emailAddresses, setEmailAddresses] = useState<string[]>([]);
+    const [initialLoad, setInitialLoad] = useState<boolean>(true);
+    const [monthlyFee, setMonthlyFee] = useState<number>(0);
 
     useEffect( () => {
+        if (!initialLoad) return
+
         const receivedData : any[] = data;
         try {
             if (receivedData.length > 0) {
                 setFormEmail(receivedData[0].email);
             }
             setEmailAddresses(receivedData.map( (val) => val.email));
+            setInitialLoad(false);
         } catch (err) {}
-    }, [data])
+    }, [data, initialLoad])
 
     const makePayment = async () => {
         if (!formEmail) {
@@ -41,28 +61,47 @@ export default function Admin() {
     }
 
     return (
-        <>
-            <UserButton/>
-
-            <div>
-                <select name="Select User" onChange={(e) => setFormEmail(e.target.value)}>
-                    {emailAddresses.map( (val) => 
-                        <option key={val} value={val}>
-                            {val}
-                        </option>
-                    )}
-                </select>
-                <input 
-                    type="number" 
-                    placeholder="Enter Amount" 
-                    onChange={(e) => setFormAmount(Number(e.target.value))}
-                />
-                <button onClick={makePayment}>
+        <div className="flex flex-col h-full w-full bg-amber-50 p-5 items-center">
+            <div className="flex w-full flex-col gap-2">
+                <h1 className="font-bold w-full">Make Custom Payment</h1>
+                <div className="flex w-full">
+                    <select 
+                        className="p-2"
+                        name="Select User" 
+                        onChange={(e) => setFormEmail(e.target.value)}
+                    >
+                        {emailAddresses.map( (val) => 
+                            <option 
+                                key={val} 
+                                value={val} 
+                                className="p-2"
+                            >
+                                {val}
+                            </option>
+                        )}
+                    </select>
+                </div>
+                <div className="flex items-center">
+                    <span className="absolute ml-2">
+                        $
+                    </span>
+                    <input
+                        type="number" 
+                        placeholder="Enter Amount" 
+                        onChange={(e) => setFormAmount(Number(e.target.value))}
+                        className="p-2 indent-4 w-48"
+                    />
+                </div>
+                
+                <button 
+                    className="p-3 bg-black font text-white rounded-lg w-48"
+                    onClick={makePayment}
+                >
                     Make Payment
                 </button>
             </div>
 
-            {content}
-        </>
+            {data ? <Analytics data={data} monthlyFee={100}/> : null}
+        </div>
     )
 }

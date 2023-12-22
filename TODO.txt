@@ -19,3 +19,11 @@ users - view balance, button to redirect to stripe
 admin - list of user emails, amount due
 
 enable subscription payments
+
+ANALYTICS
+custom payment form
+completed subscriptions % (circle)
+
+sort/filter options
+Email - paid $85/100 - red/green mark - expand
+Transaction Date - Amount - Paid by Admin - Approve rest of payment (make auto payment)
