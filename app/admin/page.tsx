@@ -27,7 +27,6 @@ export default function Admin() {
     const [formAmount, setFormAmount] = useState<number>();
     const [emailAddresses, setEmailAddresses] = useState<string[]>([]);
     const [initialLoad, setInitialLoad] = useState<boolean>(true);
-    const [monthlyFee, setMonthlyFee] = useState<number>(0);
 
     useEffect( () => {
         if (!initialLoad) return
@@ -61,7 +60,7 @@ export default function Admin() {
     }
 
     return (
-        <div className="flex flex-col h-full w-full bg-amber-50 p-5 items-center">
+        <div className="flex flex-col h-full w-full items-center">
             <div className="flex w-full flex-col gap-2">
                 <h1 className="font-bold w-full">Make Custom Payment</h1>
                 <div className="flex w-full">
@@ -94,7 +93,7 @@ export default function Admin() {
                 </div>
                 
                 <button 
-                    className="p-3 bg-black font text-white rounded-lg w-48"
+                    className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
                     onClick={makePayment}
                 >
                     Make Payment

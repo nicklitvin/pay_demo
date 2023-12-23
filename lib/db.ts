@@ -124,13 +124,32 @@ async function makePayment(email : string, amount : number, admin : boolean) {
     })
 }
 
+async function getTransactionHistory(email : string) {
+    const transactions = await prisma.users.findFirst({
+        where: {
+            email: email
+        },
+        select: {
+            transactions: {
+                select: {
+                    admin: true,
+                    amount: true,
+                    date: true
+                }
+            }
+        }
+    })
+    return transactions;
+}
+
 export {
     doesEmailExist,
     getUserInfo,
     createUser,
     isAdmin,
     getAdminData,
-    makePayment
+    makePayment,
+    getTransactionHistory
 }
 
 

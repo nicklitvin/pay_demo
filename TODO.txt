@@ -1,6 +1,9 @@
 TODO
+make transaction history visible to user and admin too
+alerts 
+double check useremail on admin/user
+fix loading screens on all pages
 integrate stripe to make payment
-analytics for admin 
 
 NOTES
 table name must have double quotes in vercel db

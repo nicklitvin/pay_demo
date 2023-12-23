@@ -21,8 +21,12 @@ export default function RootLayout({
         <html lang="en">
             <body className={inter.className}>
                 <Toaster/>
-                <Header/>
-                {children}
+                <div className="flex flex-col w-full h-fit min-h-full bg-red-300">
+                    <Header/>
+                    <div className="p-3">
+                        {children}
+                    </div>
+                </div>
             </body>
         </html>
     </ClerkProvider>

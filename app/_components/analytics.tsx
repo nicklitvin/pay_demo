@@ -74,7 +74,7 @@ export function Analytics({ data, monthlyFee } : Props) {
                     </tbody>
                 </table>
                 <button 
-                    className="p-3 bg-black text-white rounded-xl"
+                    className="p-3 bg-black text-white rounded-xl hover:brightness-50"
                     onClick={() => router.push(`/admin/user/${user.email}`)}
                 >
                     Show All Transactions
@@ -91,13 +91,13 @@ export function Analytics({ data, monthlyFee } : Props) {
                     <div className="flex-1"/>
                     <h1 className="text-center">{`Owes ${user.owes}`}</h1>
                     <button 
-                        className="bg-black text-white p-2 rounded-xl text-center"
+                        className="bg-black text-white p-2 rounded-xl text-center hover:brightness-50"
                         onClick={() => makePayment(user.email, user.owes)}
                     >
                         Forgive
                     </button>
                     <button 
-                        className="bg-black min-w-[100px] text-white p-2 rounded-xl text-center"
+                        className="bg-black min-w-[100px] text-white p-2 rounded-xl text-center hover:brightness-50"
                         onClick={() => changeOpenUser(user.email)}
                     >
                         {openedUsers.includes(user.email) ? `See Less` : `See More`}
@@ -120,7 +120,7 @@ export function Analytics({ data, monthlyFee } : Props) {
     }
 
     return (
-        <>
+        <div className="flex flex-col gap-3">
             <div className="flex flex-col w-full mt-3">
                 <h1 className="font-bold">Analytics</h1>
                 <h1>{`Progress: ${data.length - incompleteUsers.length}/${data.length}`}</h1>
@@ -135,10 +135,13 @@ export function Analytics({ data, monthlyFee } : Props) {
                 </div>
             </div>
 
-            <div className="flex flex-row w-full mt-3 gap-2 flex-wrap">
-                {incompleteUsers.map( (val) => makeUserSummary(val))}
+            <div className="flex flex-col">
+                <h1 className="font-bold">Incomplete Payments</h1>
+                <div className="flex flex-row w-full mt-3 gap-2 flex-wrap">
+                    {incompleteUsers.map( (val) => makeUserSummary(val))}
+                </div>
             </div>
-        </>
+        </div>
         
     )
 
