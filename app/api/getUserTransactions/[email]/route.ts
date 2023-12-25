@@ -10,8 +10,9 @@ export async function GET(req : Request) {
         const user = await currentUser(); 
         const email = user!.emailAddresses[0].emailAddress;
 
-        if (await isAdmin(email)) {
-            const userEmail = req.url.split("/getUserTransactions/")[1];
+        const userEmail = req.url.split("/getUserTransactions/")[1] + "@gmail.com";
+
+        if (await isAdmin(email) || userEmail === email) {
             const data = await getTransactionHistory(userEmail);
             return NextResponse.json(data, {status: 200});
         } else {

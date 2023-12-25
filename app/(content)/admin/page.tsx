@@ -60,7 +60,8 @@ export default function Admin() {
     }
 
     return (
-        <div className="flex flex-col h-full w-full items-center">
+        <div className="flex flex-col h-full w-full gap-3">
+
             <div className="flex w-full flex-col gap-2">
                 <h1 className="font-bold w-full">Make Custom Payment</h1>
                 <div className="flex w-full">

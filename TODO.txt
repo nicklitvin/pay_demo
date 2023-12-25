@@ -1,8 +1,5 @@
 TODO
-make transaction history visible to user and admin too
-alerts 
-double check useremail on admin/user
-fix loading screens on all pages
+admin should change monthly fee
 integrate stripe to make payment
 
 NOTES

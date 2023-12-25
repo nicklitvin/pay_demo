@@ -1,30 +1,27 @@
 "use client"
-
-import { UserButton } from "@clerk/nextjs";
-import axios from "axios"
-import useSWR from "swr"
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-    const { data } = useSWR("/api/getUserData", (url) => axios.get(url).then(res => res.data) );
+    const router = useRouter();
 
-    let body;
-    if (data) {
-        body = (
-            <>
-                <h1>{`Signed in as ${data.email}`}</h1>
-                <h1>{`Amount due: ${data.amountDue}`}</h1>
-            </>
-        )
-    } else {
-        body = (
-            <h1>Loading...</h1>
-        )
-    }
-    
     return (
-        <>
-            <UserButton/>
-            {body}
-        </>
+        <div className="flex flex-col w-full h-full min-h-full bg-primary items-center justify-center gap-3">
+            <h1 className="font-bold text-6xl text-text">Auto-Subscribe</h1>
+            <h1 className="text-2xl text-text">Easily Manage Your Subscribers</h1>
+            <div className="flex flex-row gap-3">
+                <button 
+                    onClick={() => router.push("/admin")}
+                    className="p-3 rounded-lg bg-complement font-bold hover:brightness-75"
+                >
+                    Admin Dashboard
+                </button>
+                <button 
+                    onClick={() => router.push("/user")}
+                    className="p-3 rounded-lg bg-complement font-bold hover:brightness-75"
+                >
+                    User Dashboard
+                </button>
+            </div>
+        </div>
     )
 }

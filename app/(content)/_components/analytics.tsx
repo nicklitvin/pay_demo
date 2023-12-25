@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import classNames from "classnames";
 
 interface UserData {
     email: string,
@@ -25,7 +26,7 @@ export function Analytics({ data, monthlyFee } : Props) {
     const [incompleteUsers, setIncompleteUsers] = useState<UserSummary[]>([]);
     const [openedUsers, setOpenedUsers] = useState<string[]>([]);
 
-    useEffect( () => {  
+        useEffect( () => {  
         const result : UserSummary[] = []
         for (let user of data) {
             const totalPaid = user.transactions.reduce( (previous, current) => previous + current.amount,0);
@@ -53,9 +54,8 @@ export function Analytics({ data, monthlyFee } : Props) {
 
     const showTrasnsactions = (user : UserSummary) => {
         return (
-            <div className="w-full flex items-center flex-col gap-2">
-                <h1 className="font-bold">Monthly Transactions</h1>
-                <table className="w-full">
+            <div className="w-full flex items-center flex-col">
+                <table className="w-full border-2">
                     <thead>
                         <tr>
                             <th className="p-2 border-2">Date</th>
@@ -66,41 +66,47 @@ export function Analytics({ data, monthlyFee } : Props) {
                     <tbody>
                         {user.data.transactions.map( (val,index) => 
                             <tr key={`${val.email}-${index}-transaction`}>
-                                <td className="p-1 text-center">{new Date(val.date).toLocaleString()}</td>
-                                <td className="p-1 text-center">{val.amount}</td>
-                                <td className="p-1 text-center">{String(val.admin)}</td>
+                                <td className="p-1 text-center border-2">{new Date(val.date).toLocaleString()}</td>
+                                <td className="p-1 text-center border-2">{`$${val.amount}`}</td>
+                                <td className="p-1 text-center border-2">{String(val.admin)}</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-                <button 
-                    className="p-3 bg-black text-white rounded-xl hover:brightness-50"
-                    onClick={() => router.push(`/admin/user/${user.email}`)}
-                >
-                    Show All Transactions
-                </button>
             </div>
         )
     }
 
     const makeUserSummary = (user : UserSummary) => {
         return (
-            <div key={user.email} className="w-2/5 min-w-[500px] border-1 flex flex-col p-3 bg-orange-300 rounded-lg gap-3 items-center">
+            <div key={user.email} className="w-full border-1 flex flex-col p-3 pl-10 pr-10 bg-primary rounded-lg gap-3 items-center">
                 <div className="flex w-full gap-3 items-center">
-                    <h1 className="font-bold w-[200px] break-words text-center">{user.email}</h1>
+                    <h1 className="font-bold w-[200px] break-words">{user.email}</h1>
                     <div className="flex-1"/>
-                    <h1 className="text-center">{`Owes ${user.owes}`}</h1>
+                    <h1 className="text-center font-bold p-3 bg-complement rounded-xl w-[150px] text-text">
+                        {`Owes $${user.owes}`}
+                    </h1>
                     <button 
-                        className="bg-black text-white p-2 rounded-xl text-center hover:brightness-50"
+                        className={classNames(
+                            "bg-complement font-bold min-w-[100px] text-white p-3 rounded-xl text-center",
+                            openedUsers.includes(user.email) ? "brightness-75 hover:brightness-50" : "brightness-100 hover:brightness-50"
+                        )}
+                        onClick={() => changeOpenUser(user.email)}
+                    >
+                        {openedUsers.includes(user.email) ? `See Less` : `See More`}
+                    </button>
+                    <button 
+                        className="bg-complement font-bold text-white p-3 rounded-xl text-center hover:brightness-50"
                         onClick={() => makePayment(user.email, user.owes)}
                     >
                         Forgive
                     </button>
+                    
                     <button 
-                        className="bg-black min-w-[100px] text-white p-2 rounded-xl text-center hover:brightness-50"
-                        onClick={() => changeOpenUser(user.email)}
+                        className="p-3 bg-complement text-white rounded-xl hover:brightness-50 font-bold"
+                        onClick={() => router.push(`history/${user.email}`)}
                     >
-                        {openedUsers.includes(user.email) ? `See Less` : `See More`}
+                        Show All Transactions
                     </button>
                 </div>
                 
@@ -121,15 +127,16 @@ export function Analytics({ data, monthlyFee } : Props) {
 
     return (
         <div className="flex flex-col gap-3">
-            <div className="flex flex-col w-full mt-3">
+
+            <div className="flex flex-col w-full">
                 <h1 className="font-bold">Analytics</h1>
-                <h1>{`Progress: ${data.length - incompleteUsers.length}/${data.length}`}</h1>
+                <h1>{`Completed Subscriptions: ${data.length - incompleteUsers.length}/${data.length}`}</h1>
                 <div 
-                    className="h-6 bg-red-700 rounded-full"
+                    className="h-6 bg-red-600 rounded-full"
                     style={{width: totalProgressLength}}
                 >
                     <div 
-                        className="w-36 h-6 bg-green-700 rounded-full"
+                        className="w-36 h-6 bg-green-600 rounded-full"
                         style={{width: totalProgressLength * (data.length - incompleteUsers.length)/data.length}}
                     />
                 </div>
@@ -142,7 +149,5 @@ export function Analytics({ data, monthlyFee } : Props) {
                 </div>
             </div>
         </div>
-        
     )
-
 }
