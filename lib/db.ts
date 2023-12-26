@@ -125,7 +125,7 @@ async function makePayment(email : string, amount : number, admin : boolean) {
 }
 
 async function getTransactionHistory(email : string) {
-    const transactions = await prisma.users.findFirst({
+    const transactions = await prisma.users.findUnique({
         where: {
             email: email
         },
@@ -135,6 +135,9 @@ async function getTransactionHistory(email : string) {
                     admin: true,
                     amount: true,
                     date: true
+                },
+                orderBy: {
+                    date: "desc"
                 }
             }
         }

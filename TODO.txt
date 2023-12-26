@@ -1,6 +1,12 @@
 TODO
+verify purchase request with webhook and add to db
+user select custom value to send to server
 admin should change monthly fee
-integrate stripe to make payment
+admin add emails to site
+
+FAR FUTURE
+students add themselves to a class
+    admin creates account ...
 
 NOTES
 table name must have double quotes in vercel db
@@ -27,3 +33,6 @@ completed subscriptions % (circle)
 sort/filter options
 Email - paid $85/100 - red/green mark - expand
 Transaction Date - Amount - Paid by Admin - Approve rest of payment (make auto payment)
+
+x - (0.029x + 0.3) = 100
+0.971x = 100.3 = 103.30

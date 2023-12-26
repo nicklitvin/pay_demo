@@ -24,8 +24,4 @@ export async function POST(req : Request) {
         console.log(err);
         return NextResponse.json(err, {status: 500});
     }
-
-    // await makePayment("litpineapples@gmail.com",10,true);
-
-    // return NextResponse.json(null, {status: 200});
 }
