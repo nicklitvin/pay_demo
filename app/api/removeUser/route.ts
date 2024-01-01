@@ -1,4 +1,4 @@
-import { isAdmin, makePayment } from "@/lib/db";
+import { deleteUser, isAdmin } from "@/lib/db";
 import { auth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -10,17 +10,15 @@ export async function POST(req : Request) {
         const user = await currentUser(); 
         const email = user!.emailAddresses[0].emailAddress;
 
-        const data = await req.json();
-
         if (await isAdmin(email)) {
-            await makePayment(data.email, data.amount, true);
+            const data = await req.json();
+            await deleteUser(data.email);
             return NextResponse.json(null, {status: 200});
         } else {
             return NextResponse.json(null, {status: 401});
         }
-
-    } catch (err) {
+    } catch (err) { 
         console.log(err);
-        return NextResponse.json(err, {status: 500});
+        return NextResponse.json(null, {status: 500})
     }
 }

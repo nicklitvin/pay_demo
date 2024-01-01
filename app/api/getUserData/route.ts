@@ -17,10 +17,9 @@ export async function GET() {
                 amountDue: user.amountDue
             })
         } else {
-            const user = await createUser(userEmail);
             return NextResponse.json({
-                email: userEmail,
-                amountDue: user.amountDue
+                email: null,
+                amountDue: null
             })
         }       
     } catch (err) {

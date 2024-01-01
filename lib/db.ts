@@ -59,6 +59,7 @@ async function getAmountDue(email : string) {
             ]
         }
     });
+
     const totalPaid = pastTransactions.reduce( (previous,current) => previous + current.amount, 0);
     const monthlyFee = await getMonthlyFee();
     return monthlyFee - totalPaid;
@@ -145,6 +146,19 @@ async function getTransactionHistory(email : string) {
     return transactions;
 }
 
+async function deleteUser(email : string) {
+    await prisma.transactions.deleteMany({
+        where: {
+            email: email
+        },
+    });
+    await prisma.users.delete({
+        where: {
+            email: email
+        }
+    })
+}
+
 export {
     doesEmailExist,
     getUserInfo,
@@ -152,7 +166,8 @@ export {
     isAdmin,
     getAdminData,
     makePayment,
-    getTransactionHistory
+    getTransactionHistory,
+    deleteUser
 }
 
 

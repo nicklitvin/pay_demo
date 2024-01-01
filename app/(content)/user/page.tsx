@@ -23,27 +23,37 @@ export default function Home() {
         } else if (success == "0") {
             toast.error("Error With Payment");
         }
+        window.history.pushState({path: "/user"},"","/user");
     }, [])
 
     if (data) {
-        return (
-            <div className="flex flex-col gap-3">
-                <h1 className="font-bold text-2xl">{`Signed in as ${data.email}`}</h1>
-                <h1 className="font-bold text-lg">{`Amount due: $${data.amountDue}`}</h1>
-                <button 
-                    onClick={() => router.push(`/history/${data.email.split("@gmail.com")[0]}`)}
-                    className="p-3 rounded-lg bg-primary font-bold hover:brightness-75 w-60"
-                >
-                    View Transaction History
-                </button>
-                <button
-                    onClick={() => makePayment(data.amountDue)}
-                    className="p-3 rounded-lg bg-primary font-bold hover:brightness-75 w-60"
-                >
-                    Pay All
-                </button>
-            </div>
-        )
+        console.log(data);
+        if (data.email && typeof(data.amountDue) === "number") {
+            return (
+                <div className="flex flex-col gap-3">
+                    <h1 className="font-bold text-2xl">{`Signed in as ${data.email}`}</h1>
+                    <h1 className="font-bold text-lg">{`Amount due: $${data.amountDue}`}</h1>
+                    <button 
+                        onClick={() => router.push(`/history/${data.email.split("@gmail.com")[0]}`)}
+                        className="p-3 rounded-lg bg-primary font-bold hover:brightness-75 w-60"
+                    >
+                        View Transaction History
+                    </button>
+                    <button
+                        onClick={() => makePayment(data.amountDue)}
+                        className="p-3 rounded-lg bg-primary font-bold hover:brightness-75 w-60"
+                    >
+                        Pay All
+                    </button>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <h1 className="font-bold">User Does Not Exist</h1>
+                </div>
+            )
+        }
     } else {
         return (
             <div>

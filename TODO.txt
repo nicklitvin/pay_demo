@@ -1,8 +1,6 @@
 TODO
-verify purchase request with webhook and add to db
 user select custom value to send to server
 admin should change monthly fee
-admin add emails to site
 
 FAR FUTURE
 students add themselves to a class
@@ -12,6 +10,7 @@ NOTES
 table name must have double quotes in vercel db
 single quotes for strings
 
+stripe listen --forward-to localhost:3000/api/webhook
 npx prisma generate
 npx prisma db push
 

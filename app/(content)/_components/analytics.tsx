@@ -83,7 +83,7 @@ export function Analytics({ data, monthlyFee } : Props) {
                 <div className="flex w-full gap-3 items-center">
                     <h1 className="font-bold w-[200px] break-words">{user.email}</h1>
                     <div className="flex-1"/>
-                    <h1 className="text-center font-bold p-3 bg-complement rounded-xl w-[150px] text-text">
+                <h1 className="text-center font-bold p-3 bg-complement rounded-xl w-[150px] text-text">
                         {`Owes $${user.owes}`}
                     </h1>
                     <button 

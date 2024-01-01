@@ -24,7 +24,7 @@ export default function Header() {
         <div className="h-16 bg-primary flex flex-row-reverse p-5 items-center">
             <div 
                 className="absolute left-5 hover:cursor-pointer hover:brightness-75 hover:underline" 
-                onClick={() =>router.back()}
+                onClick={() => router.back()}
             >
                 <h1 className="font-bold">Back</h1>
             </div>
