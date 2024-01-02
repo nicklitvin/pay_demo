@@ -104,7 +104,7 @@ export function Analytics({ data, monthlyFee } : Props) {
                     
                     <button 
                         className="p-3 bg-complement text-white rounded-xl hover:brightness-50 font-bold"
-                        onClick={() => router.push(`history/${user.email}`)}
+                        onClick={() => router.push(`history/${user.email.split("@")[0]}`)}
                     >
                         Show All Transactions
                     </button>

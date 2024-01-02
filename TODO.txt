@@ -1,10 +1,17 @@
 TODO
-user select custom value to send to server
-admin should change monthly fee
+prisma client created too many times
+clean redesign 
+change to throwaway account
+info buttons on hover
+progress bar green fix
+email list incomplete fix width
+vercel deploy
 
 FAR FUTURE
 students add themselves to a class
     admin creates account ...
+user select custom value to send to server
+admin should change monthly fee
 
 NOTES
 table name must have double quotes in vercel db
@@ -13,25 +20,3 @@ single quotes for strings
 stripe listen --forward-to localhost:3000/api/webhook
 npx prisma generate
 npx prisma db push
-
-requirements
-let users pay by month
-view how much user owes 
-admin - view which users need to pay
-admin - manually change users paid status
-    
-users - view balance, button to redirect to stripe
-admin - list of user emails, amount due
-
-enable subscription payments
-
-ANALYTICS
-custom payment form
-completed subscriptions % (circle)
-
-sort/filter options
-Email - paid $85/100 - red/green mark - expand
-Transaction Date - Amount - Paid by Admin - Approve rest of payment (make auto payment)
-
-x - (0.029x + 0.3) = 100
-0.971x = 100.3 = 103.30

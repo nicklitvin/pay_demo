@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Analytics } from "../_components/analytics";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Admin() {
     // const {data, isLoading, error } = {
@@ -20,7 +21,7 @@ export default function Admin() {
     //     isLoading: false,
     //     error: false
     // }
-    
+    const router = useRouter();
     const { data, isLoading, error } = useSWR("/api/getAdminData", (url) => axios.get(url).then(res => res.data) );
 
     const [formEmail, setFormEmail] = useState<string>();
@@ -29,6 +30,8 @@ export default function Admin() {
     const [initialLoad, setInitialLoad] = useState<boolean>(true);
     const [newEmail, setNewEmail] = useState<string>();
     const [removeEmail, setRemoveEmail] = useState<string>();
+    const [viewEmail, setViewEmail] = useState<string>();
+
 
     useEffect( () => {
         if (!initialLoad) return
@@ -94,6 +97,18 @@ export default function Admin() {
                 success: `Removed user: ${email}`
             }
           );
+    }
+
+    const viewHistory = async () => {
+        const email = viewEmail;
+
+        if (email) {
+            const emailUrl = email.split("@")[0];
+            router.push(`http://localhost:3000/history/${emailUrl}`);
+    
+        } else {
+            toast.error("Cannot view History of undefined email");
+        }
     }
 
     if (isLoading) {
@@ -184,6 +199,35 @@ export default function Admin() {
                         onClick={removeUser}
                     >
                         Remove User
+                    </button>
+                </div>
+
+                <div className="flex w-full flex-col gap-2">
+                    <h1 className="font-bold">View Transaction History</h1>
+                    <div className="w-full flex">
+                        <select 
+                            className="p-2"
+                            name="Select User"
+                            onChange={(e) => setViewEmail(e.target.value)}
+                        >
+                            <option value="" className="brightness-50">Select a User</option>
+                            {emailAddresses.map( (val) => 
+                                <option 
+                                    key={val} 
+                                    value={val} 
+                                    className="p-2"
+                                >
+                                    {val}
+                                </option>
+                            )}
+                        </select>
+                    </div>
+                    
+                    <button
+                        className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
+                        onClick={viewHistory}
+                    >
+                        View Transactions
                     </button>
                 </div>
     
