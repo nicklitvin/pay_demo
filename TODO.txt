@@ -1,7 +1,4 @@
 TODO
-analytics redirect to history page
-no transactions text on history page text
-change to throwaway account
 vercel deploy
 
 FAR FUTURE

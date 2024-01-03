@@ -1,6 +1,5 @@
 "use client"
 
-import { makePayment } from "@/lib/db";
 import axios from "axios";
 import classNames from "classnames";
 import { useRouter } from "next/navigation";
@@ -50,6 +49,7 @@ const text = {
     selectUser: "Select A User",
     incompletePayments: "Incomplete Payments: ",
     payRest: "Forgive",
+    noUnpaid: "All users paid for this month. Nothing to see here.",
     monthlyPayment: 100
 }
 
@@ -75,11 +75,11 @@ export default function AdminOptions( {data} : Props ) {
 
     const [selectedAction, setSelectedAction] = useState<Action>("Analytics");
 
-    const [payEmail, setPayEmail] = useState<string>();
+    const [payEmail, setPayEmail] = useState<string>("");
     const [payAmount, setPayAmount] = useState<number>();
-    const [addEmail, setAddEmail] = useState<string>();
-    const [historyEmail, setHistoryEmail] = useState<string>();
-    const [removeEmail, setRemoveEmail] = useState<string>();
+    const [addEmail, setAddEmail] = useState<string>("");
+    const [historyEmail, setHistoryEmail] = useState<string>("");
+    const [removeEmail, setRemoveEmail] = useState<string>("");
 
     const actionOption = (action : Action) => {
         return (
@@ -100,7 +100,10 @@ export default function AdminOptions( {data} : Props ) {
             {
                 error: `Couldn't add payment`,
                 loading: "Making Payment",
-                success: `Paid $${amount} to ${email}`
+                success: () => {
+                    setPayEmail("");
+                    return `Paid $${amount} to ${email}`
+                }
             }
         )
     }
@@ -132,7 +135,10 @@ export default function AdminOptions( {data} : Props ) {
             {
                 error: `Couldn't add user: ${email}`,
                 loading: `Adding User`,
-                success: `Added User: ${email}`
+                success: () => {
+                    setAddEmail("")
+                    return `Added User: ${email}`
+                }
             }
         )
     }
@@ -150,7 +156,10 @@ export default function AdminOptions( {data} : Props ) {
             {
                 error: `Couldn't remove ${email}`,
                 loading: `Removing...`,
-                success: `Removed user: ${email}`
+                success: () => {
+                    setRemoveEmail("")
+                    return `Removed user: ${email}`
+                }
             }
           );
     }
@@ -160,7 +169,7 @@ export default function AdminOptions( {data} : Props ) {
 
         if (email) {
             const emailUrl = email.split("@")[0];
-            router.push(`http://localhost:3000/history/${emailUrl}`);
+            router.push(`/history/${emailUrl}`);
     
         } else {
             toast.error("Cannot view History of undefined email");
@@ -189,6 +198,7 @@ export default function AdminOptions( {data} : Props ) {
                     <select 
                         className="p-2 w-80"
                         onChange={(e) => setPayEmail(e.target.value)}
+                        value={payEmail}
                     >
                         <option value="" className="brightness-50">{text.selectUser}</option>
                         {users.map( (val) => 
@@ -213,7 +223,7 @@ export default function AdminOptions( {data} : Props ) {
                         />
                     </div>
                     <button 
-                        className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50"
+                        className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50 text-center"
                         onClick={makeCustomPayment}
                     >
                         {stuff.Pay.buttonText}
@@ -229,9 +239,10 @@ export default function AdminOptions( {data} : Props ) {
                         placeholder="Enter Gmail Address"
                         onChange={(e) => setAddEmail(e.target.value)}
                         className="p-2 w-80"
+                        value={addEmail}
                     />
                     <button 
-                        className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50"
+                        className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50 text-center"
                         onClick={addUser}
                     >
                         {stuff.Add.buttonText}
@@ -272,6 +283,7 @@ export default function AdminOptions( {data} : Props ) {
                     <select 
                         className="p-2 w-80"
                         onChange={(e) => setRemoveEmail(e.target.value)}
+                        value={removeEmail}
                     >
                         <option value="" className="brightness-50">{text.selectUser}</option>
                         {users.map( (val) => 
@@ -300,6 +312,7 @@ export default function AdminOptions( {data} : Props ) {
                             <div key={val.email} className="flex gap-3">
                                 <button
                                     className="text-back bg-first p-3 rounded-xl hover:brightness-75"
+                                    onClick={() => router.push(`/history/${val.email.split("@")[0]}`)}
                                 >
                                     {`${val.email} owes $${val.owes}`}
                                 </button>
@@ -311,6 +324,11 @@ export default function AdminOptions( {data} : Props ) {
                                 </button>
                             </div>
                     ))}
+                    { incompleteUsers.length > 0 ? null :
+                        <h1 className="font-bold">
+                            {text.noUnpaid}
+                        </h1>
+                    }
                 </div>
             </div>
         </div>

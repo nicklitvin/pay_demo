@@ -1,6 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+// prisma setup
+
+const prismaClientSingleton = () => {
+    console.log("creating prisma client");
+    return new PrismaClient()
+}
+
+declare global {
+    var prisma: undefined | ReturnType<typeof prismaClientSingleton>
+}
+
+const prisma = globalThis.prisma ?? prismaClientSingleton()
+
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma
+
+// database interactions
 
 let monthlyFee : number | null;
 interface UserInfo {

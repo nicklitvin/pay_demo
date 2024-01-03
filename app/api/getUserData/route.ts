@@ -1,4 +1,4 @@
-import { createUser, doesEmailExist, getUserInfo } from "@/lib/db";
+import { doesEmailExist, getUserInfo } from "@/lib/db";
 import { auth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -17,10 +17,7 @@ export async function GET() {
                 amountDue: user.amountDue
             })
         } else {
-            return NextResponse.json({
-                email: null,
-                amountDue: null
-            })
+            return NextResponse.json(null, {status: 404})
         }       
     } catch (err) {
         console.log(err);

@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 const text = {
     title: "PayControl",
     subtitle: "An easy way to manage user payments",
-    email: "Admin Email:",
-    password: "Admin Password: ",
+    email: "Admin Email: quest.throwaway.acc@gmail.com",
+    password: "Admin Password: Throwaway!1",
     admin: "Admin Dashboard",
     users: "User Dashboard"
 }

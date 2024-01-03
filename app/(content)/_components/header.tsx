@@ -1,9 +1,10 @@
 "use client"
 import { UserButton } from "@clerk/nextjs"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 export default function Header() {
     const pathname = usePathname();
+    const router = useRouter();
     let title : string = "";
 
     switch (pathname) {
@@ -21,6 +22,12 @@ export default function Header() {
 
     return (
         <div className="w-full h-16 relative flex items-center">
+            <div 
+                className="absolute left-5 hover:cursor-pointer"
+                onClick={() => router.push("/")}
+            >
+                <h1 className="hover:underline">Home</h1>
+            </div>
             <h1 className="w-full font-bold text-center text-xl">
                 {title}
             </h1>
