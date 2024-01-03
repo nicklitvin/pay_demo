@@ -1,10 +1,7 @@
 TODO
-clean redesign 
-no transactions on history page text
+analytics redirect to history page
+no transactions text on history page text
 change to throwaway account
-info buttons on hover
-progress bar green fix
-email list incomplete fix width
 vercel deploy
 
 FAR FUTURE

@@ -1,12 +1,13 @@
 "use client"
 
+import { makePayment } from "@/lib/db";
 import axios from "axios";
 import classNames from "classnames";
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import toast from "react-hot-toast";
 
-type Action = "Pay" | "Add" | "Remove" | "History";
+type Action = "Pay" | "Add" | "Remove" | "History" | "Analytics";
 interface Content {
     title: string,
     subtitle: string,
@@ -16,43 +17,63 @@ interface Content {
 const stuff : Record<Action, Content> = {
     "Pay": {
         title: "Make Custom Payment",
-        subtitle: "",
-        buttonText: ""
+        subtitle: "Enter any amount to pay for the user (negative values accepted). \
+        The payment will be recorded as done by an administrator.",
+        buttonText: "Make Payment"
     },
     "Add": {
         title: "Add New User",
-        subtitle: "",
-        buttonText: ""
+        subtitle: "Add a user to the payment system. They will be able to login \
+        and complete payments. Must be a gmail account.",
+        buttonText: "Add User"
     },
     "History": {
         title: "View Transaction History",
-        subtitle: "",
-        buttonText: ""
+        subtitle: "See all transactions made by the user and the administrator",
+        buttonText: "View History"
     },
     "Remove": {
         title: "Remove User",
-        subtitle: "",
+        subtitle: "Remove the user from the system and the history of all of \
+        their transactions. CANNOT be undone.",
+        buttonText: "Remove"
+    },
+    "Analytics" : {
+        title: "Analytics",
+        subtitle: "Click on a user to view their transaction history. Forgiving \
+        a user will fulfill their payments for the month.",
         buttonText: ""
     }
 }
 
 const text = {
     selectUser: "Select A User",
-    payButton: "Make Payment",
-    addButton: "Add User",
-    historyButton: "View History",
-    removeButton: "Remove User"
+    incompletePayments: "Incomplete Payments: ",
+    payRest: "Forgive",
+    monthlyPayment: 100
 }
 
+interface UserSummary {
+    email: string,
+    owes: number
+}
 
 interface Props {
-    users: string[]
+    data: {email: string, transactions: any[]}[],
 }
 
-export default function AdminOptions( {users} : Props ) {
+export default function AdminOptions( {data} : Props ) {
     const router = useRouter();
+    const users = data.map( (val) => val.email);
 
-    const [selectedAction, setSelectedAction] = useState<Action>("Add");
+    const incompleteUsers : UserSummary[] = data.map( (val) => {
+        return {
+            email: val.email,
+            owes: val.transactions.reduce( (previous, current) => previous - current.amount, 100)
+        }
+    }).filter( (val) => val.owes > 0)
+
+    const [selectedAction, setSelectedAction] = useState<Action>("Analytics");
 
     const [payEmail, setPayEmail] = useState<string>();
     const [payAmount, setPayAmount] = useState<number>();
@@ -64,7 +85,7 @@ export default function AdminOptions( {users} : Props ) {
         return (
             <h1 className={classNames(
                 selectedAction == action ? "text-first" : "text-second",
-                "hover:text-first hover:cursor-pointer text-center"
+                "hover:text-first hover:cursor-pointer text-center text-lg"
             )}
                 onClick={() => setSelectedAction(action)}
             >
@@ -73,7 +94,18 @@ export default function AdminOptions( {users} : Props ) {
         )
     }
 
-    const makePayment = async () => {
+    const makePayment = async (email : string, amount : number) => {
+        toast.promise(
+            axios.post("/api/makePayment", {email: email, amount: amount}),
+            {
+                error: `Couldn't add payment`,
+                loading: "Making Payment",
+                success: `Paid $${amount} to ${email}`
+            }
+        )
+    }
+
+    const makeCustomPayment = async () => {
         const email = payEmail;
         const amount = payAmount;
 
@@ -82,16 +114,10 @@ export default function AdminOptions( {users} : Props ) {
         } else if (!amount) {
             toast.error("Input a non-zero amount")
         } else {
-            toast.promise(
-                axios.post("/api/makePayment", {email: email, amount: amount}),
-                {
-                    error: `Couldn't add payment`,
-                    loading: "Making Payment",
-                    success: `Paid $${amount} to ${email}`
-                }
-            )
+            await makePayment(email, amount);
         }
     }
+
 
     const addUser = async () => {
         const email = addEmail;
@@ -148,9 +174,11 @@ export default function AdminOptions( {users} : Props ) {
                 {actionOption("History")}
                 {actionOption("Pay")}
                 {actionOption("Remove")}
+                {actionOption("Analytics")}
             </div>
-            <div className="flex justify-center">
-                <h1 className="">
+
+            <div className="flex justify-center flex-col gap-3">
+                <h1 className="text-center text-sm">
                     {stuff[selectedAction].subtitle}
                 </h1>
 
@@ -186,9 +214,9 @@ export default function AdminOptions( {users} : Props ) {
                     </div>
                     <button 
                         className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50"
-                        onClick={makePayment}
+                        onClick={makeCustomPayment}
                     >
-                        {text.payButton}
+                        {stuff.Pay.buttonText}
                     </button>
                 </div>
 
@@ -206,7 +234,7 @@ export default function AdminOptions( {users} : Props ) {
                         className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50"
                         onClick={addUser}
                     >
-                        {text.addButton}
+                        {stuff.Add.buttonText}
                     </button>
                 </div>
 
@@ -233,7 +261,7 @@ export default function AdminOptions( {users} : Props ) {
                         className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50"
                         onClick={viewHistory}
                     >
-                        {text.historyButton}
+                        {stuff.History.buttonText}
                     </button>
                 </div>
 
@@ -260,10 +288,30 @@ export default function AdminOptions( {users} : Props ) {
                         className="p-3 bg-first font text-back rounded-lg w-48 hover:brightness-50"
                         onClick={removeUser}
                     >
-                        {text.removeButton}
+                        {stuff.Remove.buttonText}
                     </button>
                 </div>
 
+                <div className={classNames(
+                    selectedAction == "Analytics" ? "block" : "hidden",
+                    "flex flex-col gap-3 items-center"
+                )}>
+                    {incompleteUsers.map( (val) => (
+                            <div key={val.email} className="flex gap-3">
+                                <button
+                                    className="text-back bg-first p-3 rounded-xl hover:brightness-75"
+                                >
+                                    {`${val.email} owes $${val.owes}`}
+                                </button>
+                                <button
+                                    className="text-back bg-second p-3 rounded-xl hover:brightness-75"
+                                    onClick={() => makePayment(val.email, val.owes)}
+                                >
+                                    {text.payRest}
+                                </button>
+                            </div>
+                    ))}
+                </div>
             </div>
         </div>
     )
