@@ -5,24 +5,26 @@ import useSWR from "swr";
 import { Analytics } from "../_components/analytics";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import AdminOptions from "../_components/adminOptions";
 
 export default function Admin() {
-    // const {data, isLoading, error } = {
-    //     data: [
-    //         {
-    //             email: "a@asjdhkjxdkajdhksajdhkasgmail.com",
-    //             transactions: []
-    //         },
-    //         {
-    //             email: "b@gmail.com",
-    //             transactions: []
-    //         },
-    //     ],
-    //     isLoading: false,
-    //     error: false
-    // }
+    const {data, isLoading, error } = {
+        data: [
+            {
+                email: "a@asjdhkjxdkajdhksajdhkasgmail.com",
+                transactions: []
+            },
+            {
+                email: "b@gmail.com",
+                transactions: []
+            },
+        ],
+        isLoading: false,
+        error: false
+    }
+
     const router = useRouter();
-    const { data, isLoading, error } = useSWR("/api/getAdminData", (url) => axios.get(url).then(res => res.data) );
+    // const { data, isLoading, error } = useSWR("/api/getAdminData", (url) => axios.get(url).then(res => res.data) );
 
     const [formEmail, setFormEmail] = useState<string>();
     const [formAmount, setFormAmount] = useState<number>();
@@ -111,128 +113,130 @@ export default function Admin() {
         }
     }
 
-    if (isLoading) {
-        return <h1 className="font-bold">Loading...</h1>
-    } else if (error) {
-        return <h1 className="font-bold">Not a registered Admin</h1>
-    } else {
-        return (
-            <div className="flex flex-col h-full w-full gap-3">
+    return <AdminOptions users={data.map( (val) => val.email)}/>
+
+    // if (isLoading) {
+    //     return <h1 className="font-bold">Loading...</h1>
+    // } else if (error) {
+    //     return <h1 className="font-bold">Not a registered Admin</h1>
+    // } else {
+    //     return (
+    //         <div className="flex flex-col h-full w-full gap-3">
     
-                <div className="flex w-full flex-col gap-2">
-                    <h1 className="font-bold w-full">Make Custom Payment</h1>
-                    <div className="flex w-full">
-                        <select 
-                            className="p-2"
-                            name="Select User" 
-                            onChange={(e) => setFormEmail(e.target.value)}
-                        >
-                            <option value="" className="brightness-50">Select a User</option>
-                            {emailAddresses.map( (val) => 
-                                <option 
-                                    key={val} 
-                                    value={val} 
-                                    className="p-2"
-                                >
-                                    {val}
-                                </option>
-                            )}
-                        </select>
-                    </div>
-                    <div className="flex items-center">
-                        <span className="absolute ml-2">
-                            $
-                        </span>
-                        <input
-                            type="number" 
-                            placeholder="Enter Amount" 
-                            onChange={(e) => setFormAmount(Number(e.target.value))}
-                            className="p-2 indent-4 w-48"
-                        />
-                    </div>
+    //             <div className="flex w-full flex-col gap-2">
+    //                 <h1 className="font-bold w-full">Make Custom Payment</h1>
+    //                 <div className="flex w-full">
+    //                     <select 
+    //                         className="p-2"
+    //                         name="Select User" 
+    //                         onChange={(e) => setFormEmail(e.target.value)}
+    //                     >
+    //                         <option value="" className="brightness-50">Select a User</option>
+    //                         {emailAddresses.map( (val) => 
+    //                             <option 
+    //                                 key={val} 
+    //                                 value={val} 
+    //                                 className="p-2"
+    //                             >
+    //                                 {val}
+    //                             </option>
+    //                         )}
+    //                     </select>
+    //                 </div>
+                    // <div className="flex items-center">
+                    //     <span className="absolute ml-2">
+                    //         $
+                    //     </span>
+                    //     <input
+                    //         type="number" 
+                    //         placeholder="Enter Amount" 
+                    //         onChange={(e) => setFormAmount(Number(e.target.value))}
+                    //         className="p-2 indent-4 w-48"
+                    //     />
+                    // </div>
                     
-                    <button 
-                        className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
-                        onClick={makePayment}
-                    >
-                        Make Payment
-                    </button>
-                </div>
+    //                 <button 
+    //                     className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
+    //                     onClick={makePayment}
+    //                 >
+    //                     Make Payment
+    //                 </button>
+    //             </div>
 
-                <div className="flex w-full flex-col gap-2">
-                    <h1 className="font-bold">Manage Users</h1>
+    //             <div className="flex w-full flex-col gap-2">
+    //                 <h1 className="font-bold">Manage Users</h1>
 
-                    <input
-                        type="string"
-                        placeholder="Enter Gmail Address"
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        className="p-2 w-48"
-                    />
-                    <button
-                        className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
-                        onClick={addUser}
-                    >
-                        Add New User
-                    </button>
+    //                 <input
+    //                     type="string"
+    //                     placeholder="Enter Gmail Address"
+    //                     onChange={(e) => setNewEmail(e.target.value)}
+    //                     className="p-2 w-48"
+    //                 />
+    //                 <button
+    //                     className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
+    //                     onClick={addUser}
+    //                 >
+    //                     Add New User
+    //                 </button>
 
-                    <div className="w-full flex">
-                        <select 
-                            className="p-2"
-                            name="Select User"
-                            onChange={(e) => setRemoveEmail(e.target.value)}
-                        >
-                            <option value="" className="brightness-50">Select a User</option>
-                            {emailAddresses.map( (val) => 
-                                <option 
-                                    key={val} 
-                                    value={val} 
-                                    className="p-2"
-                                >
-                                    {val}
-                                </option>
-                            )}
-                        </select>
-                    </div>
+    //                 <div className="w-full flex">
+    //                     <select 
+    //                         className="p-2"
+    //                         name="Select User"
+    //                         onChange={(e) => setRemoveEmail(e.target.value)}
+    //                     >
+    //                         <option value="" className="brightness-50">Select a User</option>
+    //                         {emailAddresses.map( (val) => 
+    //                             <option 
+    //                                 key={val} 
+    //                                 value={val} 
+    //                                 className="p-2"
+    //                             >
+    //                                 {val}
+    //                             </option>
+    //                         )}
+    //                     </select>
+    //                 </div>
                     
-                    <button
-                        className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
-                        onClick={removeUser}
-                    >
-                        Remove User
-                    </button>
-                </div>
+    //                 <button
+    //                     className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
+    //                     onClick={removeUser}
+    //                 >
+    //                     Remove User
+    //                 </button>
+    //             </div>
 
-                <div className="flex w-full flex-col gap-2">
-                    <h1 className="font-bold">View Transaction History</h1>
-                    <div className="w-full flex">
-                        <select 
-                            className="p-2"
-                            name="Select User"
-                            onChange={(e) => setViewEmail(e.target.value)}
-                        >
-                            <option value="" className="brightness-50">Select a User</option>
-                            {emailAddresses.map( (val) => 
-                                <option 
-                                    key={val} 
-                                    value={val} 
-                                    className="p-2"
-                                >
-                                    {val}
-                                </option>
-                            )}
-                        </select>
-                    </div>
+    //             <div className="flex w-full flex-col gap-2">
+    //                 <h1 className="font-bold">View Transaction History</h1>
+    //                 <div className="w-full flex">
+    //                     <select 
+    //                         className="p-2"
+    //                         name="Select User"
+    //                         onChange={(e) => setViewEmail(e.target.value)}
+    //                     >
+    //                         <option value="" className="brightness-50">Select a User</option>
+    //                         {emailAddresses.map( (val) => 
+    //                             <option 
+    //                                 key={val} 
+    //                                 value={val} 
+    //                                 className="p-2"
+    //                             >
+    //                                 {val}
+    //                             </option>
+    //                         )}
+    //                     </select>
+    //                 </div>
                     
-                    <button
-                        className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
-                        onClick={viewHistory}
-                    >
-                        View Transactions
-                    </button>
-                </div>
+    //                 <button
+    //                     className="p-3 bg-black font text-white rounded-lg w-48 hover:brightness-50"
+    //                     onClick={viewHistory}
+    //                 >
+    //                     View Transactions
+    //                 </button>
+    //             </div>
     
-                {data ? <Analytics data={data} monthlyFee={100}/> : null}
-            </div>
-        )
-    }
+    //             {data ? <Analytics data={data} monthlyFee={100}/> : null}
+    //         </div>
+    //     )
+    // }
 }

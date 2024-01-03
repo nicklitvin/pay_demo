@@ -9,16 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        "primary": "#ba7f45",
-        "complement": "#C8996A",
-        "other": "#CFAC63",
-        "text": "#FFFFFF"
+        "back": "#F9F5FF",
+        "first": "#8C00FD",
+        "second": "#252B40",
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-      },
+    //   backgroundImage: {
+    //     'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+    //     'gradient-conic':
+    //       'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+    //   },
     },
   },
   plugins: [],

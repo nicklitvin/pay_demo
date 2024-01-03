@@ -96,13 +96,6 @@ export function Analytics({ data, monthlyFee } : Props) {
                         {openedUsers.includes(user.email) ? `See Less` : `See More`}
                     </button>
                     <button 
-                        className="bg-complement font-bold text-white p-3 rounded-xl text-center hover:brightness-50"
-                        onClick={() => makePayment(user.email, user.owes)}
-                    >
-                        Forgive
-                    </button>
-                    
-                    <button 
                         className="p-3 bg-complement text-white rounded-xl hover:brightness-50 font-bold"
                         onClick={() => router.push(`history/${user.email.split("@")[0]}`)}
                     >

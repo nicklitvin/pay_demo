@@ -1,6 +1,6 @@
 TODO
-prisma client created too many times
 clean redesign 
+no transactions on history page text
 change to throwaway account
 info buttons on hover
 progress bar green fix

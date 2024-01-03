@@ -1,20 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-// PRISMA SETUP
-
-declare global {
-    var prisma: undefined | PrismaClient
-}
-
-function makePrisma() {
-    console.log("making prisma client");
-    return new PrismaClient();
-}
-
-const prisma = globalThis.prisma ?? makePrisma();
-if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
-
-// MAIN DB FUNCTIONS
+const prisma = new PrismaClient();
 
 let monthlyFee : number | null;
 interface UserInfo {
